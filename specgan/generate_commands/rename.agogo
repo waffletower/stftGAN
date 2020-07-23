@@ -1,0 +1,2 @@
+#!/bin/bash
+mv commands_listen.mat commands_listen_$(date "+%Y.%m.%d-%H.%M.%S").mat

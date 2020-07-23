@@ -20,3 +20,13 @@ tfnntools.egg-info/
 __pycache__
 venv
 .python-version
+
+# data folder
+##############
+data/test_spectrograms_and_derivs_*
+data/sc09
+
+# additional top level
+######################
+saved_results
+*.egg-info
