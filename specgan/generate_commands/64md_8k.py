@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 import scipy.io
 from phase_recovery.numba_pghi import pghi
+import time
 
 downscale = 1
 
@@ -137,6 +138,8 @@ print(generated_signals.max())
 print(generated_signals.min())
 print(generated_signals.mean())
 
+print(f"length of generated_signals: {len(generated_signals)}")
+
 ##Phase recovery
 
 from data.ourLTFATStft import LTFATStft
@@ -151,6 +154,9 @@ clipBelow = -10
 
 anStftWrapper = LTFATStft()
 
+output_folder = f"results/{time.strftime('%Y%m%d-%H%M%S')}"
+os.mkdir(output_folder)
+
 # Compute Tgrad and Fgrad from the generated spectrograms
 tgrads = np.zeros_like(generated_signals)
 fgrads = np.zeros_like(generated_signals)
@@ -164,8 +170,13 @@ for index, magSpectrogram in enumerate(generated_signals):
     logMagSpectrogram = np.log(magSpectrogram.astype(np.float64))
     phase = pghi(logMagSpectrogram, tgrads[index], fgrads[index], fft_hop_size, fft_window_length, L, tol=10)
     reconstructed_audios[index] = anStftWrapper.reconstructSignalFromLoggedSpectogram(logMagSpectrogram, phase, windowLength=fft_window_length, hopSize=fft_hop_size)
-    print(reconstructed_audios[index].max())
+    output_file = f"{output_folder}/ra_{index}"
+    print(f"{output_file}: {reconstructed_audios[index].max()}")
+    array32 = np.array(reconstructed_audios[index], dtype=np.float32)
+    with open(output_file, "wb") as fil:
+        fil.write(array32.tobytes())
 
+    
 print("reconstructed audios!")
 
-scipy.io.savemat('commands_listen.mat', {"reconstructed": reconstructed_audios, "generated_spectrograms": generated_signals})
+#scipy.io.savemat('commands_listen.mat', {"reconstructed": reconstructed_audios, "generated_spectrograms": generated_signals})
