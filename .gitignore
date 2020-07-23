@@ -26,6 +26,10 @@ venv
 data/test_spectrograms_and_derivs_*
 data/sc09
 
+# generate
+##########
+specgan/generate_commands/results
+
 # additional top level
 ######################
 saved_results
